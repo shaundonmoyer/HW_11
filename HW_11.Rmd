@@ -50,16 +50,73 @@ and store it at the top of your project directory.
 + stationid='GHCND:ASN00091245'  
 + Not all years have data!   
 
-**4) Calculate the average annual temperature and the number of months used to generate that mean from #3 above (years without data can be excluded).  Report in a table, for example:**
-```{r, echo = FALSE}
-yrs <- c(1985, 1986, 1990)
-tavg <- c(12.90750, 12.39750, 11.73167)
-mons <- c(4, 12, 6)
-my_table2 <- data.frame("Year" = yrs, "Tavg" = tavg, "Mons" = mons)
-my_table2 %>%
-  kable(digits=3) %>%
-  kable_styling()
+```{r}
+install.packages('rnoaa') 
 ```
+
+```{r}
+library(rnoaa)
+```
+
+```{r}
+options(noaakey="vOhMgIvwqWkcgBBlpYPfHSldYhQiTfbR")
+```
+
+```{r}
+ncdc(datasetid='GSOM', stationid = 'GHCND:ASN00091245', datatypeid='TAVG', startdate = '1991-01-01', enddate = '1991-12-31', limit = 1000, add_units=TRUE)
+```
+
+
+
+```{r}
+library(rnoaa)
+
+options(noaakey="vOhMgIvwqWkcgBBlpYPfHSldYhQiTfbR")
+
+my_df <- data.frame()
+
+for ( i in seq(1985,2019)){ 
+  my.query<-ncdc(datasetid='GSOM', stationid ='GHCND:ASN00091245', datatypeid = 'TAVG', startdate = paste0(i, "-01-01"), enddate = paste0(i, "-12-31"), add_units = TRUE)$data
+  
+  my_df <- rbind(my_df, my.query)
+  
+}
+
+```
+
+
+
+**4) Calculate the average annual temperature and the number of months used to generate that mean from #3 above (years without data can be excluded).  Report in a table, for example:**
+
+
+
+```{r}
+library(dplyr)
+
+my_df$date <- substr(my_df$date, 1,4)
+
+count_my_df <- my_df %>%
+  group_by(date) %>%
+  tally()
+
+
+```
+
+```{r}
+the_sum <- my_df %>%
+  group_by(date) %>%
+   summarize(Tavg = mean(value))
+
+```
+
+
+```{r}
+new_data <- cbind(count_my_df, the_sum)
+new_data[,-1]
+```
+
+
+
 
 
 
