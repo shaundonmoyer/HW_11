@@ -2,13 +2,13 @@
 data("Titanic")
 Titanic
 MWSurvived <- as.data.frame(apply(Titanic, c(2, 4), sum))
-MWSurvivalRate <- MWSurvived$Yes/(MWSurvived$No+MWSurvived$Yes)
-MWSurvivalLabeled <- cbind(MWSurvived, MWSurvivalRate)
+MWSurvivalRate <- MWSurvived$Yes/(MWSurvived$No+MWSurvived$Yes) #calculate survival rate
+MWSurvivalLabeled <- cbind(MWSurvived, MWSurvivalRate)#add rate to table
 #Rate of survival is greater for women
 
-CASurvived <- as.data.frame(apply(Titanic, c(3, 4), sum))
-CASurvivalRate <- CASurvived$Yes/(CASurvived$No+CASurvived$Yes)
-CASurvivalLabeled <- cbind(CASurvived, CASurvivalRate)
+CASurvived <- as.data.frame(apply(Titanic, c(3, 4), sum)) 
+CASurvivalRate <- CASurvived$Yes/(CASurvived$No+CASurvived$Yes) #calculate survival rate
+CASurvivalLabeled <- cbind(CASurvived, CASurvivalRate) #add rate to table
 #Rate of survival is greater for children
 
 #2
@@ -21,16 +21,28 @@ prismDat <- function(path){
   return(dataFiles)
 }
 
-minTemp <- function(df, threshold) {
-  if(df$tmin<threshold){
-    print(FALSE)
-  }else{
-    print(TRUE)
+myData <- prismDat("data/") #retrieve data and store in global environment
+
+
+TestminTemp <- function(df, threshTemp) {
+  for (i in 1:nrow (df)){
+   if(df$tmin[i] < threshTemp){
+      newVector <- FALSE
+    }else{
+      newVector <- TRUE
+    }
+  newtable <- cbind(df, newVector)
+  return(newtable)
   }
-return(df)
 }
 
+Whatever <- lapply(minTemp, myData, )
 
+#make it pretty
+my_table <- df
+  my_table %>%
+  kable() %>%
+  kable_styling()
 
 
 #3
@@ -48,7 +60,6 @@ for (j in 1: length(my.query$data$value)){
     data_temp[row, temperature] <- my.query$data$value[j]
   }
 }
-
 
 
 start <- as.Date("19850101", format = "%Y%m%d")
