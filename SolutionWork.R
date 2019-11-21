@@ -38,6 +38,19 @@ TestminTemp <- function(df, threshTemp) {
 
 Whatever <- lapply(minTemp, myData, )
 
+```{r}
+lapply(myData, minTemp)
+```
+
+```{r}
+my_table <- ####
+  my_table %>%
+  kable() %>%
+  kable_styling()
+```
+
+
+
 #make it pretty
 my_table <- df
   my_table %>%
