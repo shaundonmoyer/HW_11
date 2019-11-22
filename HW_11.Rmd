@@ -69,10 +69,10 @@ for ( i in seq(1985,2019)){
 ```{r}
 library(dplyr)
 
-my_df$date <- substr(my_df$date, 1,4)
+my_df$date <- substr(my_df$date, 1,4) #Gets rid of the time stamp on the date
 
-count_my_df <- my_df %>%
-  group_by(date) %>%
+count_my_df <- my_df %>% # This pipe groups by date, and counts how many times 
+  group_by(date) %>%     # each date (year) appears
   tally()
 
 ```
@@ -80,17 +80,17 @@ count_my_df <- my_df %>%
 
 
 ```{r}
-the_sum <- my_df %>%
-  group_by(date) %>%
+the_sum <- my_df %>% # This pipe again groups the data by date and then
+  group_by(date) %>% # averages the temp vaules for the grouped dates
    summarize(Tavg = mean(value))
 
 ```
 
 
 ```{r}
-new_data <- cbind(count_my_df, the_sum)
-final_table <- new_data[,-1]
-names(final_table)[names(final_table) == "n"] <- "Months"
+new_data <- cbind(count_my_df, the_sum) ## Combines temp data with year data
+final_table <- new_data[,-1] ## Date column appears twice, so I removed one
+names(final_table)[names(final_table) == "n"] <- "Months" # Change column name
 names(final_table)[names(final_table) == "date"] <- "Year"
 final_table %>%
   kable(digits=3) %>%
