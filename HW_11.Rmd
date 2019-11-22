@@ -55,9 +55,9 @@ prismDat <- function(path){
 minTemp <- function(df, threshTemp) {
   for (i in 1:nrow (df)){
    if(df$tmin[i] < threshTemp){
-      newVector <- FALSE
+      newVector <- as.logical(FALSE)
     }else{
-      newVector <- TRUE
+      newVector <- as.logical(TRUE)
     }
   newtable <- cbind(df, newVector)
   return(newtable)
@@ -65,9 +65,9 @@ minTemp <- function(df, threshTemp) {
 }
 ```
 
-test lapply
 ``{r}
-lapply(myData, minTemp, 3)
+dataList <- c(myData[[1]], myData[[2]], myData[[3]])
+lapply(dataList, minTemp, 3)
 ```
 
 
