@@ -39,7 +39,7 @@ TestminTemp <- function(df, threshTemp) {
 Whatever <- lapply(minTemp, myData, )
 
 ```{r}
-lapply(myData, minTemp)
+lapply(myData, minTemp, -3)
 ```
 
 ```{r}

@@ -65,7 +65,10 @@ minTemp <- function(df, threshTemp) {
 }
 ```
 
-
+test lapply
+``{r}
+lapply(myData, minTemp, 3)
+```
 
 
 *Hints:*  
