@@ -94,12 +94,13 @@ library(rnoaa)
 options(noaakey="vOhMgIvwqWkcgBBlpYPfHSldYhQiTfbR")
 ```
 
+# This line of code pulls one year of data, was used as a test
 ```{r}
 ncdc(datasetid='GSOM', stationid = 'GHCND:ASN00091245', datatypeid='TAVG', startdate = '1991-01-01', enddate = '1991-12-31', limit = 1000, add_units=TRUE)
 ```
 
 
-
+# Loop below incorporates line of code above into a loop for years 1985-2019
 ```{r}
 library(rnoaa)
 
