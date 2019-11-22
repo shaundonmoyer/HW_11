@@ -65,6 +65,7 @@ for ( i in seq(1985,2019)){
 
 
 
+
 ```{r}
 library(dplyr)
 
@@ -76,6 +77,8 @@ count_my_df <- my_df %>%
 
 ```
 
+
+
 ```{r}
 the_sum <- my_df %>%
   group_by(date) %>%
@@ -86,5 +89,11 @@ the_sum <- my_df %>%
 
 ```{r}
 new_data <- cbind(count_my_df, the_sum)
-new_data[,-1]
+final_table <- new_data[,-1]
+names(final_table)[names(final_table) == "n"] <- "Months"
+names(final_table)[names(final_table) == "date"] <- "Year"
+final_table %>%
+  kable(digits=3) %>%
+  kable_styling()
+
 ```
