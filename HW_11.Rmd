@@ -49,6 +49,13 @@ prismDat <- function(path){
   return(dataFiles)
 }
 ```
+Need to run this function in your .Rmd
+
+
+```{r}
+prism_data_list <- prismDat("data/")
+```
+But this returns a list, not a df so next function won't work on output.
 
 ```{r}
 minTemp <- function(df, threshTemp) {
@@ -64,11 +71,10 @@ minTemp <- function(df, threshTemp) {
 }
 ```
 
-``{r}
-dataList <- c(myData[[1]], myData[[2]], myData[[3]])
-lapply(dataList, minTemp, 3)
+Then you only need to do the lapply of your function thusly:
+```{r}
+lapply(prism_data_list, minTemp, 3)
 ```
-
 
 *Hints:*  
 + Read in the prism daily data files in /data using your prismDat function you made in class.    
@@ -102,13 +108,9 @@ ncdc(datasetid='GSOM', stationid = 'GHCND:ASN00091245', datatypeid='TAVG', start
 
 # Loop below incorporates line of code above into a loop for years 1985-2019
 ```{r}
-library(rnoaa)
+my_df <- data.frame() #name your objects wisely! station_df?
 
-options(noaakey="vOhMgIvwqWkcgBBlpYPfHSldYhQiTfbR")
-
-my_df <- data.frame()
-
-for ( i in seq(1985,2019)){ 
+for ( i in seq(1985,1987)){ #so as to not overload noaa
   my.query<-ncdc(datasetid='GSOM', stationid ='GHCND:ASN00091245', datatypeid = 'TAVG', startdate = paste0(i, "-01-01"), enddate = paste0(i, "-12-31"), add_units = TRUE)$data
   
   my_df <- rbind(my_df, my.query)
