@@ -1,6 +1,6 @@
 ---
 title: "HW_11"
-author: "Shaun Donmoyer"
+author: "Shaun Donmoyer and Sara Schreder-Gomes"
 date: "11/21/2019"
 output: html_document
 ---
@@ -11,14 +11,77 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, include=FALSE}
 library(kableExtra)
+library(dplyr)
 ```
 
 
 
-**3) Write a loop to extract Cape Grim monthly temperature data (GHCN) for 1985-2019 using rnoaa.**
+**1) Using the R data Titanic, use apply to answer the following:**  
+```{r}
+data("Titanic")
+MWSurvived <- as.data.frame(apply(Titanic, c(2, 4), sum))
+MWSurvivalRate <- MWSurvived$Yes/(MWSurvived$No+MWSurvived$Yes) #calculate survival rate
+MWSurvivalLabeled <- cbind(MWSurvived, MWSurvivalRate) #add rate to table
+#Rate of survival is greater for women
+MWSurvivalLabeled
+```
+The rate of survival is greater for women.
+
+```{r}
+CASurvived <- as.data.frame(apply(Titanic, c(3, 4), sum)) 
+CASurvivalRate <- CASurvived$Yes/(CASurvived$No+CASurvived$Yes) #calculate survival rate
+CASurvivalLabeled <- cbind(CASurvived, CASurvivalRate) #add rate to table
+#Rate of survival is greater for children
+CASurvivalLabeled
+```
+The rate of survival is greater for children.
+
+#### lapply
+**2) Some insect species can only survive if daily temperatures stay above some temperature.  Write a function that takes two arguments, a data frame and a temperature that returns a TRUE when the tmin > X and a FALSE when tmin is < X, where X is the threshold temperature.  Have the function then add a logical vector to each daily climate data frame reporting whether that threshold was exceeded (TRUE) or not (FALSE). Apply this function across all three of the daily data frames provided in /data. For each data frame, your results might look like:**
+
+```{r}
+prismDat <- function(path){
+  data.path <- path
+  glob.path <- paste0(data.path, "*", ".csv")  
+  dataFiles <- lapply(Sys.glob(glob.path), read.csv, skip=11, head=F)
+  climvars <- c("pdate", "ppt", "tmin", "tmean", "tmax")
+  dataFiles <- lapply(dataFiles, setNames, climvars)
+  return(dataFiles)
+}
+```
+Need to run this function in your .Rmd
+
+
+```{r}
+prism_data_list <- prismDat("data/")
+```
+But this returns a list, not a df so next function won't work on output.
+
+```{r}
+minTemp <- function(df, threshTemp) {
+  for (i in 1:nrow (df)){
+   if(df$tmin[i] < threshTemp){
+      newVector <- as.logical(FALSE)
+    }else{
+      newVector <- as.logical(TRUE)
+    }
+  newtable <- cbind(df, newVector)
+  return(newtable)
+  }
+}
+```
+
+Then you only need to do the lapply of your function thusly:
+```{r}
+lapply(prism_data_list, minTemp, 3)
+```
 
 *Hints:*  
++ Read in the prism daily data files in /data using your prismDat function you made in class.    
++ Write a function that works for a single data frame from the list.  
++ Write an apply function to 'apply' your function across all the data frames in the list.  
 
+#3
 + Request a token from rnoaa. Make a .Rprofile text file (no extension) containing:  
 ```options(noaakey="your_noaa_token")``` 
 and store it at the top of your project directory.    
@@ -37,20 +100,17 @@ library(rnoaa)
 options(noaakey="vOhMgIvwqWkcgBBlpYPfHSldYhQiTfbR")
 ```
 
+# This line of code pulls one year of data, was used as a test
 ```{r}
 ncdc(datasetid='GSOM', stationid = 'GHCND:ASN00091245', datatypeid='TAVG', startdate = '1991-01-01', enddate = '1991-12-31', limit = 1000, add_units=TRUE)
 ```
 
 
-
+# Loop below incorporates line of code above into a loop for years 1985-2019
 ```{r}
-library(rnoaa)
+my_df <- data.frame() #name your objects wisely! station_df?
 
-options(noaakey="vOhMgIvwqWkcgBBlpYPfHSldYhQiTfbR")
-
-my_df <- data.frame()
-
-for ( i in seq(1985,2019)){ 
+for ( i in seq(1985,1987)){ #so as to not overload noaa
   my.query<-ncdc(datasetid='GSOM', stationid ='GHCND:ASN00091245', datatypeid = 'TAVG', startdate = paste0(i, "-01-01"), enddate = paste0(i, "-12-31"), add_units = TRUE)$data
   
   my_df <- rbind(my_df, my.query)
@@ -78,7 +138,6 @@ count_my_df <- my_df %>% # This pipe groups by date, and counts how many times
 ```
 
 
-
 ```{r}
 the_sum <- my_df %>% # This pipe again groups the data by date and then
   group_by(date) %>% # averages the temp vaules for the grouped dates
@@ -95,5 +154,4 @@ names(final_table)[names(final_table) == "date"] <- "Year"
 final_table %>%
   kable(digits=3) %>%
   kable_styling()
-
 ```
